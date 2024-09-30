@@ -18,12 +18,20 @@ bgImg.src = 'images/0002.png';
 const lifeImg = new Image();
 lifeImg.src = 'images/life.png'; // Place your life power-up image here
 
+// Adjusted dimensions for larger images
+const PLAYER_WIDTH = 70;
+const PLAYER_HEIGHT = 70;
+const ENEMY_WIDTH = 70;
+const ENEMY_HEIGHT = 70;
+const LIFE_WIDTH = 50;
+const LIFE_HEIGHT = 50;
+
 // Player object
 const player = {
-    x: canvas.width / 2 - 25,
-    y: canvas.height - 100,
-    width: 50,
-    height: 50,
+    x: canvas.width / 2 - PLAYER_WIDTH / 2,
+    y: canvas.height - 150,
+    width: PLAYER_WIDTH,
+    height: PLAYER_HEIGHT,
     speed: 5,
     bullets: [],
     lives: 3,
@@ -50,8 +58,8 @@ function Bullet(x, y, direction = 'up') {
 function Enemy(x, y) {
     this.x = x;
     this.y = y;
-    this.width = 50;
-    this.height = 50;
+    this.width = ENEMY_WIDTH;
+    this.height = ENEMY_HEIGHT;
     this.speed = 2;
     this.bullets = [];
 }
@@ -60,8 +68,8 @@ function Enemy(x, y) {
 function LifePowerUp(x, y) {
     this.x = x;
     this.y = y;
-    this.width = 30;
-    this.height = 30;
+    this.width = LIFE_WIDTH;
+    this.height = LIFE_HEIGHT;
     this.speed = 2;
 }
 
@@ -71,10 +79,10 @@ let bgY = 0;
 // Handle player movement
 const keys = {};
 document.addEventListener('keydown', (e) => {
-    keys[e.key] = true;
+    keys[e.key.toLowerCase()] = true;
 });
 document.addEventListener('keyup', (e) => {
-    keys[e.key] = false;
+    keys[e.key.toLowerCase()] = false;
 });
 
 // On-screen controls
@@ -83,17 +91,17 @@ const rightBtn = document.getElementById('rightBtn');
 const upBtn = document.getElementById('upBtn');
 const downBtn = document.getElementById('downBtn');
 
-leftBtn.addEventListener('touchstart', () => keys['ArrowLeft'] = true);
-leftBtn.addEventListener('touchend', () => keys['ArrowLeft'] = false);
+leftBtn.addEventListener('touchstart', () => keys['a'] = true);
+leftBtn.addEventListener('touchend', () => keys['a'] = false);
 
-rightBtn.addEventListener('touchstart', () => keys['ArrowRight'] = true);
-rightBtn.addEventListener('touchend', () => keys['ArrowRight'] = false);
+rightBtn.addEventListener('touchstart', () => keys['d'] = true);
+rightBtn.addEventListener('touchend', () => keys['d'] = false);
 
-upBtn.addEventListener('touchstart', () => keys['ArrowUp'] = true);
-upBtn.addEventListener('touchend', () => keys['ArrowUp'] = false);
+upBtn.addEventListener('touchstart', () => keys['w'] = true);
+upBtn.addEventListener('touchend', () => keys['w'] = false);
 
-downBtn.addEventListener('touchstart', () => keys['ArrowDown'] = true);
-downBtn.addEventListener('touchend', () => keys['ArrowDown'] = false);
+downBtn.addEventListener('touchstart', () => keys['s'] = true);
+downBtn.addEventListener('touchend', () => keys['s'] = false);
 
 // Game UI elements
 const livesDisplay = document.getElementById('lives');
@@ -104,8 +112,8 @@ restartBtn.addEventListener('click', () => {
     // Reset game state
     player.lives = 3;
     player.score = 0;
-    player.x = canvas.width / 2 - 25;
-    player.y = canvas.height - 100;
+    player.x = canvas.width / 2 - PLAYER_WIDTH / 2;
+    player.y = canvas.height - 150;
     enemies = [];
     player.bullets = [];
     lifePowerUps = [];
@@ -132,10 +140,10 @@ function gameLoop() {
     ctx.drawImage(bgImg, 0, bgY, canvas.width, canvas.height);
 
     // Move player
-    if (keys['ArrowLeft'] && player.x > 0) player.x -= player.speed;
-    if (keys['ArrowRight'] && player.x + player.width < canvas.width) player.x += player.speed;
-    if (keys['ArrowUp'] && player.y > 0) player.y -= player.speed;
-    if (keys['ArrowDown'] && player.y + player.height < canvas.height) player.y += player.speed;
+    if (keys['a'] && player.x > 0) player.x -= player.speed;
+    if (keys['d'] && player.x + player.width < canvas.width) player.x += player.speed;
+    if (keys['w'] && player.y > 0) player.y -= player.speed;
+    if (keys['s'] && player.y + player.height < canvas.height) player.y += player.speed;
 
     // Draw player
     ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
@@ -159,14 +167,14 @@ function gameLoop() {
 
     // Generate enemies
     if (gameFrame % 100 === 0) {
-        const xPosition = Math.random() * (canvas.width - 50);
-        enemies.push(new Enemy(xPosition, -50));
+        const xPosition = Math.random() * (canvas.width - ENEMY_WIDTH);
+        enemies.push(new Enemy(xPosition, -ENEMY_HEIGHT));
     }
 
     // Generate life power-ups
     if (gameFrame % 1000 === 0) { // 10 times less frequent than enemies
-        const xPosition = Math.random() * (canvas.width - 30);
-        lifePowerUps.push(new LifePowerUp(xPosition, -30));
+        const xPosition = Math.random() * (canvas.width - LIFE_WIDTH);
+        lifePowerUps.push(new LifePowerUp(xPosition, -LIFE_HEIGHT));
     }
 
     // Update and draw enemies
